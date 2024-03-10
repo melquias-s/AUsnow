@@ -1,0 +1,3 @@
+﻿  AUsnow_SDLgame.cpp
+E:\应用文件\c\visual stdio\AUsnow_SDLgame\AUsnow_SDLgame\AUsnow_SDLgame.cpp(148,1): warning C4715: “menuloop”: 不是所有的控件路径都返回值
+  AUsnow_SDLgame.vcxproj -> E:\应用文件\c\visual stdio\AUsnow_SDLgame\x64\Debug\AUsnow_SDLgame.exe
