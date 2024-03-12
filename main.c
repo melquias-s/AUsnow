@@ -241,3 +241,93 @@ int main()
 
 	return 0;
 }
+
+#include <SDL.h>
+#include <stdlib.h>
+#include <time.h>
+#include <SDL_image.h>
+#include <iostream>
+#undef main
+// 全局变量
+SDL_Window* window;
+SDL_Renderer* renderer;
+
+// 载入纹理
+SDL_Texture* LoadTexture(const std::string& file) {
+    SDL_Texture* texture = IMG_LoadTexture(renderer, file.c_str());
+    if (texture == nullptr) {
+        std::cerr << "Failed to load texture: " << SDL_GetError() << std::endl;
+    }
+    return texture;
+}
+
+
+
+// 主函数
+int main(int argc, char* argv[]) {
+    // 初始化SDL
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
+        return 1;
+    }
+
+    // 创建窗口
+    window = SDL_CreateWindow("Game Scene", 100, 100, 800, 600, SDL_WINDOW_SHOWN);
+    if (window == nullptr) {
+        std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+        SDL_Quit();
+        return 1;
+    }
+
+    // 创建渲染器
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (renderer == nullptr) {
+        SDL_DestroyWindow(window);
+        std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
+        SDL_Quit();
+        return 1;
+    }
+
+    // 加载背景图片和主角图片
+    SDL_Texture* background = LoadTexture("path/to/hospital_room.png");
+    SDL_Texture* character = LoadTexture("path/to/character.png");
+    if (background == nullptr || character == nullptr) {
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
+
+    // 游戏主循环
+    SDL_Event e;
+    bool quit = false;
+    while (!quit) {
+        // 事件处理
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT) {
+                quit = true;
+            }
+            // 可以在这里添加更多的事件处理
+        }
+
+        // 渲染背景
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, background, NULL, NULL);
+
+        // 渲染主角
+        SDL_Rect characterRect = { 350, 250, 100, 100 }; // 调整位置和大小
+        SDL_RenderCopy(renderer, character, NULL, &characterRect);
+
+        // 更新屏幕
+        SDL_RenderPresent(renderer);
+    }
+
+    // 清理资源
+    SDL_DestroyTexture(background);
+    SDL_DestroyTexture(character);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    return 0;
+}
